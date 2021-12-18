@@ -10,10 +10,10 @@ import lombok.*;
 @Builder
 public class Customer {
 
-    int id;
-    String name;
-    int age;
-    String phone;
-    String email;
-    String address;
+    private int id;
+    private String name;
+    private int age;
+    private String phone;
+    private String email;
+    private String address;
 }

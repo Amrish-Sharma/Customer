@@ -31,16 +31,15 @@ public class CustomerRespository {
 
         Statement statement=connection.createStatement();
 
-        boolean result=statement.execute("create table if not exists customerinfo(customerid int primary key, " +
-                "customername varchar2(30), age int, phone varchar2(10), " +
-                "customeremail varchar2(30), customeraddress varchar2(56)");
+        boolean result=
+                statement.execute("create table if not exists customerinfo(id int primary key, name varchar(30), age int, phone varchar(10), email varchar(30), address varchar(56))");
         logger.info("table customer info is created- {}",result);
     }
 
     private Connection getConnection(String username, String password) throws SQLException {
 
         logger.info("username - {} & password - {}", username,password);
-        return DriverManager.getConnection("jdbc:mysql//localhost:3306/customer");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/customer",username,password);
     }
 
     public Customer getCustomer(int id) throws SQLException {
@@ -50,16 +49,16 @@ public class CustomerRespository {
 
         logger.info("got the result set - {}", resultSet);
 
-        resultSet.next();
-        int customerId = resultSet.getInt("id");
-        String customername = resultSet.getString("name");
-        String customeremail = resultSet.getString("email");
-        int customerage = resultSet.getInt("age");
-        String customeraddress = resultSet.getString("address");
-        String customerphone = resultSet.getString("phone");
+        while(resultSet.next()) {
+            int customerId = resultSet.getInt("id");
+            String customername = resultSet.getString("name");
+            String customeremail = resultSet.getString("email");
+            int customerage = resultSet.getInt("age");
+            String customeraddress = resultSet.getString("address");
+            String customerphone = resultSet.getString("phone");
 
 
-        return Customer.builder()
+         return Customer.builder()
                 .id(customerId)
                 .age(customerage)
                 .name(customername)
@@ -67,6 +66,22 @@ public class CustomerRespository {
                 .phone(customerphone)
                 .address(customeraddress)
                 .build();
+        }
+        return null;
+
+    }
+
+    public void create(Customer customer) throws SQLException{
+        PreparedStatement statement=connection.prepareStatement("insert into customerinfo(name,age,phone,email,address) VALUES(?,?,?,?,?)");
+
+        statement.setString(1,customer.getName());
+        statement.setInt(2,customer.getAge());
+        statement.setString(3,customer.getPhone());
+        statement.setString(4,customer.getEmail());
+        statement.setString(5,customer.getAddress());
+
+        boolean result=statement.execute();
+        logger.info("Resul of Insert query is "+ result);
 
 
     }

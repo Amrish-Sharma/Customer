@@ -4,6 +4,9 @@ package com.example.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.sql.SQLException;
+
 @RestController
 public class CustomerController {
 
@@ -11,12 +14,21 @@ public class CustomerController {
     CustomerService customerService;
 
     @GetMapping("/get/{customerid}")
-    private String getCustomerDetails(@PathVariable("customerid") int custid){
+    private Customer getCustomerDetails(@PathVariable("customerid") int custid) throws SQLException {
 
-        return "Customer ID is "+custid;
+        return customerService.getCustomerByID(custid);
 
     }
 
-/*    @PostMapping("/create")
-    public void createCustomer(@RequestBody("customer"))*/
+    @GetMapping("/")
+    private String welcome(){
+        return "<h2>Hello, There</h2>";
+    }
+
+    @PostMapping("/create")
+    private void createCustomer(@Valid @RequestBody CustomerCreateRequest customerCreateRequest) throws SQLException {
+        customerService.createCustomer(customerCreateRequest);
+
+
+    }
 }
